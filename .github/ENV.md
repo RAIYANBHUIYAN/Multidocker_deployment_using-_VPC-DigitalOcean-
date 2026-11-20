@@ -26,9 +26,9 @@ Secrets:
 | `DROPLET_HOST` | Droplet public IP |
 | `DROPLET_KNOWN_HOSTS` | `ssh-keyscan -t ed25519 <ip>` |
 | `DEPLOY_SSH_KEY` | Private key `~\.ssh\vpc_ci_staging` (full PEM text) |
-| `VERCEL_TOKEN` | Vercel access token (with expiry) |
-| `VERCEL_ORG_ID` | `frontend/.vercel/project.json` → `orgId` |
-| `VERCEL_PROJECT_ID` | `frontend/.vercel/project.json` → `projectId` |
+| `VERCEL_TOKEN` | Create at https://vercel.com/account/tokens (set an expiry) |
+| `VERCEL_ORG_ID` | `team_E0lHI9iCGea4htzuOCBfetur` (project `vpc-frontend`) |
+| `VERCEL_PROJECT_ID` | `prj_wtUFUOFDBBMcVHBVqW6JdW94iqDj` |
 
 ## Environment `production` (deployment branch: `production` only)
 
@@ -37,11 +37,17 @@ Same secret names as staging. Use private key `~\.ssh\vpc_ci_production` for `DE
 
 ## Vercel project (not GitHub)
 
-| Name | Production | Preview / staging |
-| --- | --- | --- |
-| `API_URL` | `http://DROPLET_IP` | `http://DROPLET_IP:8080` |
+Project created: **vpc-frontend** (no GitHub connection — CI deploys with the CLI).
 
-No `NEXT_PUBLIC_` prefix. Do not connect the Vercel project to the GitHub repo; CI deploys with the CLI.
+Dashboard: https://vercel.com/raiyanbhuiyans-projects/vpc-frontend
+
+| Name | Production | Preview / staging | Development |
+| --- | --- | --- | --- |
+| `API_URL` | replace after droplet: `http://DROPLET_IP` | replace after droplet: `http://DROPLET_IP:8080` | `http://127.0.0.1:3001` (set) |
+
+No `NEXT_PUBLIC_` prefix.
+
+Protection Bypass for Automation is enabled for GitHub Actions. Put the secret value in the GitHub repository secret `VERCEL_AUTOMATION_BYPASS_SECRET` (do not commit it).
 
 ## Local app env
 
