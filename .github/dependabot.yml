@@ -1,0 +1,22 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+    target-branch: development
+  - package-ecosystem: cargo
+    directory: /backend
+    schedule:
+      interval: weekly
+    target-branch: development
+  - package-ecosystem: docker
+    directory: /backend
+    schedule:
+      interval: weekly
+    target-branch: development
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    target-branch: development

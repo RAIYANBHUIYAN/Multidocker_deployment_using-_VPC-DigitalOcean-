@@ -1,0 +1,37 @@
+name: pull-request
+
+on:
+  pull_request:
+    branches: [development, production, main]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    uses: ./.github/workflows/checks.yml
+
+  staging-smoke:
+    if: github.base_ref == 'production' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: checks
+    steps:
+      - name: Staging API health
+        env:
+          STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
+        run: |
+          test -n "$STAGING_API_URL"
+          body="$(curl -fsS "$STAGING_API_URL/health")"
+          test "$body" = "ok"
+      - name: Staging frontend
+        env:
+          STAGING_FRONTEND_URL: ${{ vars.STAGING_FRONTEND_URL }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: |
+          test -n "$STAGING_FRONTEND_URL"
+          test -n "$VERCEL_AUTOMATION_BYPASS_SECRET"
+          code="$(curl -sS -o /dev/null -w '%{http_code}' \
+            -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET" \
+            "$STAGING_FRONTEND_URL")"
+          test "$code" = "200"
