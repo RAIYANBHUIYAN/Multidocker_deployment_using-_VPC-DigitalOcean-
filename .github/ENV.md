@@ -8,7 +8,7 @@ Settings → Secrets and variables, and in Vercel project settings.
 | Name | Example | When |
 | --- | --- | --- |
 | `DEPLOY_ENABLED` | `false` until droplet + secrets exist, then `true` | Required for deploy jobs |
-| `STAGING_FRONTEND_URL` | `https://your-staging-alias.vercel.app` | Staging smoke + alias |
+| `STAGING_FRONTEND_URL` | `https://vpc-frontend-five.vercel.app` | Staging smoke (no custom domain) |
 
 ## Repository secrets
 
