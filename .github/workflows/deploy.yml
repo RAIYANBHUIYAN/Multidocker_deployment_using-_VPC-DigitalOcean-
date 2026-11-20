@@ -86,7 +86,7 @@ jobs:
     if: needs.publish-image.result == 'success'
     needs: publish-image
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     environment: ${{ github.ref_name == 'production' && 'production' || 'staging' }}
     steps:
       - name: SSH deploy
@@ -142,13 +142,16 @@ jobs:
           if [ "${GITHUB_REF_NAME}" = "production" ]; then
             vercel pull --yes --environment=production
             vercel build --prod
-            url="$(vercel deploy --prebuilt --prod)"
+            deploy_log="$(mktemp)"
+            vercel deploy --prebuilt --prod | tee "$deploy_log"
           else
             vercel pull --yes --environment=preview
             vercel build
-            url="$(vercel deploy --prebuilt)"
-            vercel alias set "$url" "${{ vars.STAGING_FRONTEND_URL }}"
+            deploy_log="$(mktemp)"
+            vercel deploy --prebuilt | tee "$deploy_log"
           fi
+          url="$(grep -Eo 'https://[a-zA-Z0-9._-]+\.vercel\.app' "$deploy_log" | tail -n1)"
+          test -n "$url"
           echo "url=$url" >> "$GITHUB_OUTPUT"
       - name: Smoke
         env:
